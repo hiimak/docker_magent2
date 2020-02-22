@@ -1,21 +1,26 @@
 version: "3.7"
 services:
     apache-php:
-      build: './php/'
+      build: './php-apache/'
+      env_file: .env
+      links:
+        - db   
       ports:
         - 8080:80
       volumes:
-        - ./php-apache/php.ini:/opt/docker/etc/php/
-        - ./public_html/:/var/www/html/
-        - ./magento_installer:/opt/docker/magento_installer
-      environment: 
-        - ./env
-    mysql:
-      image: mysql:5.6.40
-      networks:
-        - backend
-      environment:
-        - MYSQL_ROOT_PASSWORD=rootpassword
-  networks:
-    frontend:
-    backend:
+        - magento-data:/var/www/html  
+    db:
+      image: mysql:5.6.23
+      volumes:
+        - db-data:/var/lib/mysql/data
+      env_file: .env
+
+    #phpmyadmin:
+    #  image: phpmyadmin/phpmyadmin
+    #  ports:
+    #    - "8580:80"
+    #  links:
+    #    - db        
+volumes:
+    magento-data:
+    db-data: 
