@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+    apache-php:
+      build: './php/'
+      ports:
+        - 8080:80
+      volumes:
+        - ./php-apache/php.ini:/opt/docker/etc/php/
+        - ./public_html/:/var/www/html/
+        - ./magento_installer:/opt/docker/magento_installer
+      environment: 
+        - ./env
+    mysql:
+      image: mysql:5.6.40
+      networks:
+        - backend
+      environment:
+        - MYSQL_ROOT_PASSWORD=rootpassword
+  networks:
+    frontend:
+    backend:
