@@ -2,29 +2,26 @@ FROM ubuntu:18.04
 
 LABEL maintainer="Ara K."
 
-ENV INSTALLER_DIR /opt/docker
+ENV DOCKER_DIR /opt/docker/
+ENV INSTALLER_DIR ${DOCKER_DIR}/magento_installer
 ENV COMPOSER_HOME /var/www/.composer/
 
 
 # Install apache2
-COPY ./magento_installer ${INSTALLER_DIR}/magento_installer
-COPY ./sites-available ${INSTALLER_DIR}/apache2/sites-available
+COPY ./magento_installer ${INSTALLER_DIR}
+COPY ./sites-available ${DOCKER_DIR}/apache2/sites-available
 
-RUN ls -a $INSTALLER_DIR
-
-RUN apt-get install git -y
+RUN apt-get update
+RUN apt-get -y install curl
+RUN apt-get -y install git 
 RUN cd $INSTALLER_DIR \
-    && bash install_apache.sh
+    && bash install_apache.sh \
+    && bash install_php.sh
 
 
 # Install php
-RUN curl -sS https://getcomposer.org/installer | php \
+RUN curl -sS https://getcomposer.org/installer | \
     && mv composer.phar /usr/local/bin/composer
 COPY ./auth.json $COMPOSER_HOME
-
-COPY ./php.ini /etc/php/7.2/apache2/
-
-RUN cd $INSTALLER_DIR \
-    && bash install_php.sh
 
 RUN rm -r $INSTALLER_DIR

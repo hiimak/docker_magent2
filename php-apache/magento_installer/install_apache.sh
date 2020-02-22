@@ -6,8 +6,7 @@ install_software(){
 	echo "     Apache2        "
 	echo "------------------------------------------------------------------"
 	
-	apt update
-	apt install -y apache2
+	apt-get install -y apache2
     
     a2enmod rewrite
 
